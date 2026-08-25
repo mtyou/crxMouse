@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mouse Gesture Lite</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <header class="header">
+        <div>
+          <h1>Mouse Gesture Lite</h1>
+          <p>按住鼠标右键绘制手势</p>
+        </div>
+        <label class="switch" title="启用或停用手势">
+          <input id="enabled" type="checkbox" />
+          <span class="slider"></span>
+        </label>
+      </header>
+
+      <section id="gesture-settings" class="mapping" aria-label="手势映射"></section>
+
+      <div class="actions">
+        <button id="save" type="button">保存手势</button>
+        <button id="reset" class="secondary" type="button">恢复默认</button>
+      </div>
+
+      <p id="status" class="status" role="status"></p>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

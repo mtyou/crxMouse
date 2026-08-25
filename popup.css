@@ -1,0 +1,144 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #172033;
+  background: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  width: 320px;
+  margin: 0;
+}
+
+.popup {
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+h1 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.3;
+}
+
+.header p {
+  margin: 4px 0 0;
+  color: #667085;
+  font-size: 12px;
+}
+
+.switch {
+  position: relative;
+  flex: 0 0 auto;
+  width: 38px;
+  height: 22px;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+}
+
+.slider {
+  position: absolute;
+  inset: 0;
+  cursor: pointer;
+  border-radius: 11px;
+  background: #cbd5e1;
+  transition: background 140ms ease;
+}
+
+.slider::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, .25);
+  transition: transform 140ms ease;
+}
+
+.switch input:checked + .slider {
+  background: #2563eb;
+}
+
+.switch input:checked + .slider::before {
+  transform: translateX(16px);
+}
+
+.mapping {
+  display: grid;
+  gap: 8px;
+  padding-top: 14px;
+}
+
+.gesture-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 30px;
+  font-size: 13px;
+}
+
+.gesture-row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+select {
+  width: 116px;
+  height: 28px;
+  padding: 0 6px;
+  border: 1px solid #cbd5e1;
+  border-radius: 4px;
+  color: #1d4ed8;
+  background: #eff6ff;
+  font: 600 12px/1 system-ui, sans-serif;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 14px;
+}
+
+button {
+  flex: 1;
+  height: 30px;
+  border: 1px solid #2563eb;
+  border-radius: 4px;
+  color: #ffffff;
+  background: #2563eb;
+  cursor: pointer;
+  font: 600 12px system-ui, sans-serif;
+}
+
+button.secondary {
+  border-color: #cbd5e1;
+  color: #344054;
+  background: #ffffff;
+}
+
+.status {
+  min-height: 16px;
+  margin: 12px 0 0;
+  color: #667085;
+  font-size: 11px;
+}
