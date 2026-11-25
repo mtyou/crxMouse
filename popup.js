@@ -1,12 +1,8 @@
 const DEFAULT_SETTINGS = {
   enabled: true,
   gestures: {
-    back: "L",
-    forward: "R",
     top: "RU",
     bottom: "RD",
-    scrollDown: "D",
-    scrollUp: "U",
     refresh: "UD",
     close: "DR",
     reopen: "DL"
@@ -14,13 +10,9 @@ const DEFAULT_SETTINGS = {
 };
 
 const ACTIONS = [
-  ["back", "后退"],
-    ["forward", "前进"],
-    ["top", "滚动到顶端"],
-    ["bottom", "滚动到底端"],
-    ["scrollDown", "下滑"],
-    ["scrollUp", "上滑"],
-    ["refresh", "刷新"],
+  ["top", "滚动到顶端"],
+  ["bottom", "滚动到底端"],
+  ["refresh", "刷新"],
   ["close", "关闭当前标签"],
   ["reopen", "打开最近关闭的标签"]
 ];

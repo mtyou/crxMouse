@@ -4,13 +4,11 @@
   const START_DISTANCE = 10;
   const SAMPLE_DISTANCE = 8;
   const MAX_GESTURE_TIME = 1400;
+  const DOUBLE_RIGHT_CLICK_TIME = 500;
+  const isMac = navigator.platform.startsWith("Mac");
   const ACTION_LABELS = {
-    back: "后退",
-    forward: "前进",
     top: "滚动到顶端",
     bottom: "滚动到底端",
-    scrollDown: "下滑",
-    scrollUp: "上滑",
     refresh: "刷新",
     close: "关闭当前标签",
     reopen: "打开最近关闭的标签"
@@ -27,13 +25,14 @@
   let canvas = null;
   let context = null;
   let label = null;
-  let previousUserSelect = "";
+  let previousUserSelect = null;
   let trailColor = "#2563eb";
   let gestureMap = {};
   let suppressNextContextMenu = false;
   let suppressTimer = null;
   let linkTarget = null;
   let linkDragStarted = false;
+  let lastRightClick = null;
 
   function applySettings(settings) {
     enabled = settings.enabled;
@@ -111,7 +110,7 @@
     if (previousUserSelect !== null) {
       document.documentElement.style.userSelect = previousUserSelect;
     }
-    previousUserSelect = "";
+    previousUserSelect = null;
     linkTarget = null;
     linkDragStarted = false;
   }
@@ -218,14 +217,6 @@
     window.scrollTo({ top, behavior: "smooth" });
   }
 
-  function scrollByViewport(direction) {
-    const distance = Math.max(window.innerHeight * 0.85, 100);
-    window.scrollBy({
-      top: direction === "down" ? distance : -distance,
-      behavior: "smooth"
-    });
-  }
-
   function showResult(text) {
     if (!overlay) return;
     overlay.style.display = "block";
@@ -243,12 +234,6 @@
 
     if (result.action === "top" || result.action === "bottom") {
       scrollTo(result.action);
-      showResult(result.label);
-      return;
-    }
-
-    if (result.action === "scrollDown" || result.action === "scrollUp") {
-      scrollByViewport(result.action === "scrollDown" ? "down" : "up");
       showResult(result.label);
       return;
     }
@@ -271,7 +256,15 @@
   }
 
   function onMouseDown(event) {
-    if (!enabled || event.button !== 2 || tracking) return;
+    const previousClick = lastRightClick;
+    lastRightClick = null;
+    if (!enabled || event.button !== 2 || (isMac && event.ctrlKey)) return;
+    if (tracking) resetGesture();
+    if (isMac && previousClick &&
+        Date.now() - previousClick.time <= DOUBLE_RIGHT_CLICK_TIME &&
+        Math.hypot(event.clientX - previousClick.x, event.clientY - previousClick.y) < START_DISTANCE) {
+      return;
+    }
     tracking = true;
     gestureStarted = false;
     linkTarget = getDraggedLink(event.target);
@@ -288,7 +281,12 @@
   }
 
   function onMouseMove(event) {
-    if (!tracking || event.buttons !== 2) return;
+    if (!tracking) return;
+    if (!(event.buttons & 2)) {
+      resetGesture();
+      return;
+    }
+    if (event.buttons !== 2) return;
     if (Date.now() - startedAt > MAX_GESTURE_TIME) {
       resetGesture();
       return;
@@ -333,6 +331,11 @@
 
   function onMouseUp(event) {
     if (!tracking || event.button !== 2) return;
+    if (isMac && !gestureStarted && !linkDragStarted &&
+        Date.now() - startedAt <= DOUBLE_RIGHT_CLICK_TIME &&
+        Math.hypot(event.clientX - points[0].x, event.clientY - points[0].y) < START_DISTANCE) {
+      lastRightClick = { time: Date.now(), x: event.clientX, y: event.clientY };
+    }
     const draggedLink = linkDragStarted ? linkTarget : null;
     if (draggedLink) {
       armContextMenuSuppression();
@@ -353,6 +356,12 @@
   }
 
   function onContextMenu(event) {
+    if (isMac && event.ctrlKey) return;
+    // Chrome on macOS opens the menu before the pointer has moved.
+    if (isMac && tracking && event.button === 2) {
+      event.preventDefault();
+      return;
+    }
     if (gestureStarted || linkDragStarted || suppressNextContextMenu) {
       event.preventDefault();
       suppressNextContextMenu = false;
@@ -367,4 +376,8 @@
   document.addEventListener("mousemove", onMouseMove, true);
   document.addEventListener("mouseup", onMouseUp, true);
   document.addEventListener("contextmenu", onContextMenu, true);
+  window.addEventListener("blur", () => {
+    lastRightClick = null;
+    resetGesture();
+  });
 })();

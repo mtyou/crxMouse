@@ -2,12 +2,8 @@ const DEFAULT_SETTINGS = {
   enabled: true,
   trailColor: "#2563eb",
   gestures: {
-    back: "L",
-    forward: "R",
     top: "RU",
     bottom: "RD",
-    scrollDown: "D",
-    scrollUp: "U",
     refresh: "UD",
     close: "DR",
     reopen: "DL"
@@ -53,7 +49,7 @@ async function getSettings() {
 }
 
 function isSameGestureMap(first, second) {
-  return ACTION_KEYS.every((action) => first[action] === second[action]);
+  return Object.keys(second).every((action) => first[action] === second[action]);
 }
 
 function normalizeGestures(gestures) {
@@ -144,12 +140,6 @@ function getSessionUrl(session) {
 
 async function runTabAction(action, tabId) {
   switch (action) {
-    case "back":
-      await chrome.tabs.goBack(tabId);
-      break;
-    case "forward":
-      await chrome.tabs.goForward(tabId);
-      break;
     case "refresh":
       await chrome.tabs.reload(tabId);
       break;
